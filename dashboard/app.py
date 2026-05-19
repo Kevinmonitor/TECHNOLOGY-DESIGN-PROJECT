@@ -59,16 +59,16 @@ st.markdown("""
 
 # ── Sidebar ──
 st.sidebar.markdown("## 📊 Sentiment Analysis")
-st.sidebar.markdown("**COS60011** — Sem 1, 2026")
+st.sidebar.markdown("**COS60011** - Sem 1, 2026")
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 👥 Team")
 st.sidebar.markdown("""
-- **Fin** — Project Lead  
-- **Bikram** — Data Engineer  
-- **Hanok** — ML Engineer  
-- **Aniketh** — NLP Engineer  
-- **Kevin** — LLM Analyst  
-- **Himanshu** — Evaluation Engineer  
+- **Fin** - Project Lead  
+- **Bikram** - Data Engineer  
+- **Hanok** - ML Engineer  
+- **Aniketh** - NLP Engineer  
+- **Kevin** - LLM Analyst  
+- **Himanshu** - Evaluation Engineer  
 """)
 st.sidebar.markdown("---")
 st.sidebar.markdown("*Swinburne University of Technology*")
