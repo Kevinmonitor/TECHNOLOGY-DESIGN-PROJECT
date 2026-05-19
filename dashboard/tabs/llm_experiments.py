@@ -20,7 +20,7 @@ from utils import (
 def render():
     section_header(
         "LLM Zero-shot & Few-shot Experiments",
-        "Kevin — LLM Analyst",
+        "Kevin - LLM Analyst",
     )
 
     # ── Try loading results ──
@@ -48,7 +48,7 @@ def render():
                 <li>Google's lightweight open model</li>
                 <li>Zero-shot: classify with label descriptions only</li>
                 <li>Few-shot: 1–5 examples per class from FPB train</li>
-                <li>No fine-tuning — prompt engineering only</li>
+                <li>No fine-tuning - prompt engineering only</li>
             </ul>
         </div>
         """,
@@ -64,7 +64,7 @@ def render():
                 <li>Meta's compact instruction-tuned model</li>
                 <li>Same zero-shot and few-shot protocols</li>
                 <li>Comparison: architecture vs model size effect</li>
-                <li>No fine-tuning — prompt engineering only</li>
+                <li>No fine-tuning - prompt engineering only</li>
             </ul>
         </div>
         """,
@@ -169,14 +169,14 @@ Sentiment:""",
 
     # ── Bar chart ──
     filtered_display = filtered.copy()
-    filtered_display["label"] = filtered_display["model"] + " — " + filtered_display["strategy"]
+    filtered_display["label"] = filtered_display["model"] + " - " + filtered_display["strategy"]
 
     fig = px.bar(
         filtered_display,
         x="label",
         y="f1_macro",
         color="model",
-        title="Macro F1 — LLM Experiments",
+        title="Macro F1 - LLM Experiments",
         text="f1_macro",
         color_discrete_sequence=["#e74c3c", "#9b59b6"],
     )

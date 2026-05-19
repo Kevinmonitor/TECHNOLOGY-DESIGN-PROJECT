@@ -2,7 +2,7 @@
 Tab 4: BERT Fine-tuning (Models A & B)
 Owner: Aniketh (NLP Engineer)
 
-STATUS: Results available — update CSV filenames below once Aniketh exports them.
+STATUS: Results available - update CSV filenames below once Aniketh exports them.
 """
 
 import streamlit as st
@@ -20,8 +20,8 @@ from utils import (
 
 def render():
     section_header(
-        "BERT Fine-tuning — Models A & B",
-        "Aniketh — NLP Engineer",
+        "BERT Fine-tuning - Models A & B",
+        "Aniketh - NLP Engineer",
     )
 
     # ── Try loading BERT results ──
@@ -142,7 +142,7 @@ def render():
         x="Model",
         y="F1 (macro)",
         color="Type",
-        title="F1 (Macro) — BERT vs TF-IDF Baselines",
+        title="F1 (Macro) - BERT vs TF-IDF Baselines",
         color_discrete_map={"Baseline": "#8899aa", "BERT": "#00d4ff"},
         text="F1 (macro)",
     )
@@ -170,7 +170,7 @@ def render():
             y="F1",
             color="Model",
             barmode="group",
-            title="Per-Class F1 — BERT Models",
+            title="Per-Class F1 - BERT Models",
             color_discrete_sequence=["#4C72B0", "#DD8452"],
         )
         fig.update_layout(height=400, yaxis_range=[0, 1])

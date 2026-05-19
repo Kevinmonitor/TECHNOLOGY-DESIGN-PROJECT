@@ -1,5 +1,5 @@
 """
-Tab 5: Sequential Transfer Learning — Model C
+Tab 5: Sequential Transfer Learning - Model C
 Owner: Fin (Project Lead) + Bikram (assist)
 
 STATUS: Not yet complete. This page has placeholder structure 
@@ -20,7 +20,7 @@ from utils import (
 
 def render():
     section_header(
-        "Sequential Transfer Learning — Model C",
+        "Sequential Transfer Learning - Model C",
         "Fin (Lead) & Bikram (assist)",
     )
 
@@ -174,7 +174,7 @@ def render():
 
     for _, row in model_c_results.iterrows():
         all_models.append({
-            "Model": f"BERT C — {row['stage']}",
+            "Model": f"BERT C - {row['stage']}",
             "F1 (macro)": row["f1_macro"],
             "Type": "BERT Sequential",
         })

@@ -19,8 +19,8 @@ from utils import (
 
 def render():
     section_header(
-        "Baseline Models — TF-IDF + Classical ML",
-        "Hanok — ML Engineer",
+        "Baseline Models - TF-IDF + Classical ML",
+        "Hanok - ML Engineer",
     )
 
     # ── Load results ──
@@ -49,7 +49,7 @@ def render():
         short = condition_short.get(row["Model Condition"], "?")
         with col:
             st.metric(
-                label=f"Model {short} — {row['Classifier']}",
+                label=f"Model {short} - {row['Classifier']}",
                 value=f"F1: {row['F1 (macro)']:.3f}",
                 delta=f"Acc: {row['Accuracy']:.3f}",
             )
@@ -90,7 +90,7 @@ def render():
         y=metric_choice,
         color="Classifier",
         barmode="group",
-        title=f"{metric_choice} — All Experiments",
+        title=f"{metric_choice} - All Experiments",
         color_discrete_sequence=["#4C72B0", "#DD8452", "#55A868"],
         text=metric_choice,
     )
@@ -125,9 +125,9 @@ def render():
     # Hardcoded from notebook output (replace with CSV load if available)
     perclass_data = {
         "Experiment": [
-            "A — LogReg", "A — SVM", "A — NB",
-            "B — LogReg", "B — SVM", "B — NB",
-            "C — LogReg", "C — SVM", "C — NB",
+            "A - LogReg", "A - SVM", "A - NB",
+            "B - LogReg", "B - SVM", "B - NB",
+            "C - LogReg", "C - SVM", "C - NB",
         ],
         "Fear":     [0.000, 0.040, 0.000, 0.167, 0.250, 0.200, 0.148, 0.133, 0.000],
         "Joy":      [0.000, 0.000, 0.000, 0.286, 0.316, 0.462, 0.269, 0.296, 0.133],
@@ -153,7 +153,7 @@ def render():
         )
     )
     fig.update_layout(
-        title="Per-Class F1 Scores — All 9 Experiments",
+        title="Per-Class F1 Scores - All 9 Experiments",
         height=400,
         yaxis=dict(autorange="reversed"),
     )

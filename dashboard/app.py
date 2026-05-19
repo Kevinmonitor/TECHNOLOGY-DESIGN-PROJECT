@@ -1,6 +1,6 @@
 """
 Domain-Adaptive Sentiment Analysis Dashboard
-COS60011 — Technology Design Project | Semester 1, 2026
+COS60011 - Technology Design Project | Semester 1, 2026
 Swinburne University of Technology
 
 Run: streamlit run app.py
