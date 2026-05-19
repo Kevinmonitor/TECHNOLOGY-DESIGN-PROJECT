@@ -20,7 +20,7 @@ from utils import (
 def render():
     section_header(
         "Cross-Model Evaluation & Comparison",
-        "Himanshu — Evaluation Engineer",
+        "Himanshu - Evaluation Engineer",
     )
 
     # ── Load all available results ──
@@ -97,7 +97,7 @@ def render():
     results_df = pd.DataFrame(all_results)
 
     # ── Master comparison chart ──
-    st.markdown("### F1 (Macro) — All Approaches")
+    st.markdown("### F1 (Macro) - All Approaches")
 
     metric_choice = st.selectbox(
         "Select metric",
@@ -118,7 +118,7 @@ def render():
         y="Approach",
         color="Type",
         orientation="h",
-        title=f"{metric_choice} — All Models Compared",
+        title=f"{metric_choice} - All Models Compared",
         color_discrete_map=color_map,
         text=metric_choice,
     )

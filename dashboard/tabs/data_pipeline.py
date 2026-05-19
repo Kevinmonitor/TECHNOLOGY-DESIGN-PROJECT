@@ -19,7 +19,7 @@ from utils import (
 def render():
     section_header(
         "Data Pipeline & Preparation",
-        "Bikram Bhattarai — Data Engineer",
+        "Bikram Bhattarai - Data Engineer",
     )
 
     # ── Load datasets ──
@@ -84,7 +84,7 @@ def render():
             ]
         )
         fig.update_layout(
-            title=f"Label Distribution — {dataset_choice}",
+            title=f"Label Distribution - {dataset_choice}",
             yaxis_title="Count",
             height=380,
         )
@@ -101,7 +101,7 @@ def render():
             y="word_count",
             color="label",
             color_discrete_map=LABEL_COLORS,
-            title=f"Text Length by Class — {dataset_choice}",
+            title=f"Text Length by Class - {dataset_choice}",
         )
         fig.update_layout(height=380, showlegend=False)
         st.plotly_chart(apply_plotly_theme(fig), width="stretch")
@@ -205,14 +205,14 @@ def render():
         strip hashtags → remove non-ASCII → replace punctuation → normalise whitespace.
         <br><br>
         <strong>Note:</strong> Numbers are preserved for BERT (WordPiece tokenization handles them natively).
-        TF-IDF baselines replaced digits with NUM — a known limitation documented in the baseline notebook.
+        TF-IDF baselines replaced digits with NUM - a known limitation documented in the baseline notebook.
     </div>
     """,
         unsafe_allow_html=True,
     )
 
     # ── FPB split verification ──
-    with st.expander("🔍 Split Verification — No Data Leakage"):
+    with st.expander("🔍 Split Verification - No Data Leakage"):
         st.markdown("Stratified 70/15/15 split on FPB. Verify class proportions are consistent:")
         split_data = []
         for name, df in [("Train", fpb_train), ("Val", fpb_val), ("Test", fpb_test)]:
