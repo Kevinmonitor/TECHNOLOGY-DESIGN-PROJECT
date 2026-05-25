@@ -11,10 +11,9 @@ from plotly.subplots import make_subplots
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from utils import (
-    section_header, load_csv, apply_plotly_theme,
+    section_header, apply_plotly_theme,
     LABELS, LABEL_COLORS,
 )
-
 
 def render():
     section_header(
@@ -22,21 +21,32 @@ def render():
         "Bikram Bhattarai - Data Engineer",
     )
 
-    # ── Load datasets ──
-    goemotions = load_csv("goemotions_5class.csv")
-    fpb_train = load_csv("fpb_train.csv")
-    fpb_val = load_csv("fpb_val.csv")
-    fpb_test = load_csv("fpb_test.csv")
+    # -- Load datasets dynamically from centralized paths --
+    try:
+        # If running streamlit run dashboard/app.py from the project root
+        goemotions = pd.read_csv("data/raw/goemotions_5class.csv")
+        fpb_train = pd.read_csv("data/processed/fpb_train.csv")
+        fpb_val = pd.read_csv("data/processed/fpb_val.csv")
+        fpb_test = pd.read_csv("data/processed/fpb_test.csv")
+    except Exception:
+        try:
+            # Fallback if running streamlit run app.py from inside dashboard/ folder
+            goemotions = pd.read_csv("../data/raw/goemotions_5class.csv")
+            fpb_train = pd.read_csv("../data/processed/fpb_train.csv")
+            fpb_val = pd.read_csv("../data/processed/fpb_val.csv")
+            fpb_test = pd.read_csv("../data/processed/fpb_test.csv")
+        except Exception:
+            goemotions = None
+            fpb_train = None
 
     if goemotions is None or fpb_train is None:
         st.warning(
-            "⚠️ CSV files not found in `dashboard/data/`. "
-            "Copy your CSVs (goemotions_5class.csv, fpb_train.csv, fpb_val.csv, fpb_test.csv) "
-            "into the `dashboard/data/` folder."
+            "?? Centralized CSV files not found. "
+            "Please make sure you run 'python src/data_preprocessing.py' first!"
         )
         st.stop()
 
-    # ── Dataset overview metrics ──
+    # -- Dataset overview metrics --
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("GoEmotions", f"{len(goemotions):,}", "General domain")
     c2.metric("FPB Train", f"{len(fpb_train):,}", "Financial domain")
@@ -45,7 +55,7 @@ def render():
 
     st.markdown("")
 
-    # ── Interactive dataset explorer ──
+    # -- Interactive dataset explorer --
     st.markdown("### Dataset Explorer")
     dataset_choice = st.selectbox(
         "Select dataset to explore",
@@ -107,7 +117,7 @@ def render():
         st.plotly_chart(apply_plotly_theme(fig), width="stretch")
 
     # Sample texts
-    with st.expander("📝 Sample texts from selected dataset"):
+    with st.expander("?? Sample texts from selected dataset"):
         for lbl in selected_classes:
             subset = filtered[filtered["label"] == lbl]
             if len(subset) > 0:
@@ -118,7 +128,7 @@ def render():
 
     st.markdown("---")
 
-    # ── Cross-domain comparison ──
+    # -- Cross-domain comparison --
     st.markdown("### Cross-Domain Analysis")
 
     col1, col2 = st.columns(2)
@@ -175,7 +185,7 @@ def render():
         )
         st.plotly_chart(apply_plotly_theme(fig), width="stretch")
 
-    # ── Key stats table ──
+    # -- Key stats table --
     st.markdown("### Dataset Summary")
     summary_data = []
     for name, df in [
@@ -196,13 +206,13 @@ def render():
         })
     st.dataframe(pd.DataFrame(summary_data), width="stretch", hide_index=True)
 
-    # ── Preprocessing pipeline ──
+    # -- Preprocessing pipeline --
     st.markdown("### Preprocessing Pipeline")
     st.markdown(
         """
     <div class="highlight-box">
-        <strong>7-step text normalisation:</strong> lowercase → remove URLs → remove @mentions → 
-        strip hashtags → remove non-ASCII → replace punctuation → normalise whitespace.
+        <strong>7-step text normalisation:</strong> lowercase ? remove URLs ? remove @mentions ? 
+        strip hashtags ? remove non-ASCII ? replace punctuation ? normalise whitespace.
         <br><br>
         <strong>Note:</strong> Numbers are preserved for BERT (WordPiece tokenization handles them natively).
         TF-IDF baselines replaced digits with NUM - a known limitation documented in the baseline notebook.
@@ -211,8 +221,8 @@ def render():
         unsafe_allow_html=True,
     )
 
-    # ── FPB split verification ──
-    with st.expander("🔍 Split Verification - No Data Leakage"):
+    # -- FPB split verification --
+    with st.expander("?? Split Verification - No Data Leakage"):
         st.markdown("Stratified 70/15/15 split on FPB. Verify class proportions are consistent:")
         split_data = []
         for name, df in [("Train", fpb_train), ("Val", fpb_val), ("Test", fpb_test)]:
