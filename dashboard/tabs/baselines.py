@@ -1,6 +1,6 @@
 """
 Tab 3: Baseline Models (TF-IDF)
-Owner: Hanok (ML Engineer)
+Owner: Hanok (ML Engineer) / Bikram (Data Insights)
 """
 
 import streamlit as st
@@ -8,34 +8,32 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 import sys, os
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+dashboard_dir = os.path.dirname(current_dir)
+sys.path.append(dashboard_dir)
+
 from utils import (
     section_header, load_csv, apply_plotly_theme,
     LABELS, LABEL_COLORS, MODEL_COLORS,
 )
 
-
 def render():
     section_header(
         "Baseline Models - TF-IDF + Classical ML",
-        "Hanok - ML Engineer",
+        "Hanok (Modeling) & Bikram (Data Insights)",
     )
 
     # ── Load results ──
     results_df = load_csv("task2_baseline_results.csv")
 
     if results_df is None:
-        st.warning(
-            "⚠️ `task2_baseline_results.csv` not found in `dashboard/data/`. "
-            "Copy it from Hanok's baseline notebook output."
-        )
+        st.error("🚨 `task2_baseline_results.csv` not found. Please ensure baseline artifacts are generated.")
         st.stop()
 
-    # ── Top-level metrics: best per condition ──
-    st.markdown("### Best Performance per Training Condition")
-
+    # ── Top-level metrics ──
+    st.markdown("### 🏆 Best Performance per Training Condition")
     best_rows = []
     for condition in results_df["Model Condition"].unique():
         subset = results_df[results_df["Model Condition"] == condition]
@@ -44,7 +42,6 @@ def render():
 
     cols = st.columns(3)
     condition_short = {"Model A (General Only)": "A", "Model B (Domain Only)": "B", "Model C (Mixed)": "C"}
-    
     for col, row in zip(cols, best_rows):
         short = condition_short.get(row["Model Condition"], "?")
         with col:
@@ -54,75 +51,70 @@ def render():
                 delta=f"Acc: {row['Accuracy']:.3f}",
             )
 
-    st.markdown("")
+    st.divider()
 
-    # ── Interactive filters ──
-    st.markdown("### Experiment Explorer")
+    # ── BIKRAM'S PRESENTATION MOMENT: Vocabulary Overlap ──
+    st.markdown("### 🧠 Data Engineer Insight: Why Model A Failed")
+    
+    col_text, col_chart = st.columns([1.5, 1])
+    
+    with col_text:
+        st.markdown(
+            """
+            **The Problem:** Model A (trained purely on GoEmotions) performed poorly on the Financial PhraseBank test set, specifically completely failing to detect *Fear* and *Joy*.
+            
+            **The Data Diagnosis:** Through exploratory data analysis, we performed a vocabulary overlap check. Because Baseline models rely on TF-IDF (exact word matches), a lack of shared vocabulary means the model is mathematically blind to the target domain.
+            
+            * Only **53.8%** of the words used in the Financial domain exist in the General domain.
+            * Crucial financial terms (e.g., 'ebitda', 'amortisation', 'bullish') are treated as unknown tokens.
+            * **Conclusion:** This data-engineering insight validates our entire architectural strategy for Domain Adaptation (Model B and C).
+            """
+        )
+    
+    with col_chart:
+        # Donut chart for Vocab Overlap
+        fig_vocab = go.Figure(data=[go.Pie(
+            labels=['Shared Vocabulary', 'Missing Financial Terms'],
+            values=[53.8, 46.2],
+            hole=.6,
+            marker_colors=['#4C72B0', '#EAEAEA'], # Blue for shared, light grey for missing
+            textinfo='label+percent'
+        )])
+        fig_vocab.update_layout(
+            title_text="Vocabulary Overlap (General vs Financial)",
+            showlegend=False,
+            margin=dict(t=40, b=0, l=0, r=0),
+            height=250
+        )
+        st.plotly_chart(apply_plotly_theme(fig_vocab), use_container_width=True)
 
+    st.divider()
+
+    # ── Interactive filters & Chart ──
+    st.markdown("### 📊 Experiment Explorer")
     filter_col1, filter_col2 = st.columns(2)
     with filter_col1:
-        selected_conditions = st.multiselect(
-            "Training Conditions",
-            results_df["Model Condition"].unique().tolist(),
-            default=results_df["Model Condition"].unique().tolist(),
-        )
+        selected_conditions = st.multiselect("Training Conditions", results_df["Model Condition"].unique().tolist(), default=results_df["Model Condition"].unique().tolist())
     with filter_col2:
-        selected_classifiers = st.multiselect(
-            "Classifiers",
-            results_df["Classifier"].unique().tolist(),
-            default=results_df["Classifier"].unique().tolist(),
-        )
+        selected_classifiers = st.multiselect("Classifiers", results_df["Classifier"].unique().tolist(), default=results_df["Classifier"].unique().tolist())
 
-    filtered = results_df[
-        (results_df["Model Condition"].isin(selected_conditions))
-        & (results_df["Classifier"].isin(selected_classifiers))
-    ]
+    filtered = results_df[(results_df["Model Condition"].isin(selected_conditions)) & (results_df["Classifier"].isin(selected_classifiers))]
 
-    # ── Metrics comparison chart ──
-    metric_choice = st.selectbox(
-        "Select metric to compare",
-        ["F1 (macro)", "F1 (weighted)", "Accuracy", "Precision (macro)", "Recall (macro)"],
-    )
-
+    metric_choice = st.selectbox("Select metric to compare", ["F1 (macro)", "Accuracy"])
     fig = px.bar(
-        filtered,
-        x="Model Condition",
-        y=metric_choice,
-        color="Classifier",
-        barmode="group",
-        title=f"{metric_choice} - All Experiments",
-        color_discrete_sequence=["#4C72B0", "#DD8452", "#55A868"],
-        text=metric_choice,
+        filtered, x="Model Condition", y=metric_choice, color="Classifier",
+        barmode="group", color_discrete_sequence=["#4C72B0", "#DD8452", "#55A868"], text=metric_choice
     )
     fig.update_traces(texttemplate="%{text:.3f}", textposition="outside")
-    fig.update_layout(height=450, yaxis_range=[0, 1])
-    st.plotly_chart(apply_plotly_theme(fig), width="stretch")
+    fig.update_layout(height=400, yaxis_range=[0, 1])
+    st.plotly_chart(apply_plotly_theme(fig), use_container_width=True)
 
-    # ── Full results table ──
-    with st.expander("📋 Full Results Table"):
-        st.dataframe(
-            filtered.style.format({
-                "Accuracy": "{:.4f}",
-                "Precision (macro)": "{:.4f}",
-                "Recall (macro)": "{:.4f}",
-                "F1 (macro)": "{:.4f}",
-                "F1 (weighted)": "{:.4f}",
-            }),
-            width="stretch",
-            hide_index=True,
-        )
-
-    st.markdown("---")
+    st.divider()
 
     # ── Per-class F1 heatmap ──
-    st.markdown("### Per-Class F1 Analysis")
-
-    # NOTE: This section requires per-class F1 data.
-    # If you have it in a separate CSV (e.g., task2_perclass_f1.csv), load it here.
-    # Otherwise, you can hardcode the values from Hanok's notebook output.
-    # Format: rows = experiment, columns = class F1 scores
-
-    # Hardcoded from notebook output (replace with CSV load if available)
+    st.markdown("### 🎯 Per-Class F1 Analysis")
+    
+    # Hardcoded from notebook output
     perclass_data = {
         "Experiment": [
             "A - LogReg", "A - SVM", "A - NB",
@@ -137,107 +129,12 @@ def render():
     }
     perclass_df = pd.DataFrame(perclass_data).set_index("Experiment")
 
-    # Interactive heatmap
-    fig = go.Figure(
-        data=go.Heatmap(
-            z=perclass_df.values,
-            x=perclass_df.columns.tolist(),
-            y=perclass_df.index.tolist(),
-            text=np.round(perclass_df.values, 3).astype(str),
-            texttemplate="%{text}",
-            textfont=dict(size=10),
-            colorscale="RdYlGn",
-            zmin=0,
-            zmax=1,
-            colorbar=dict(title="F1"),
-        )
-    )
-    fig.update_layout(
-        title="Per-Class F1 Scores - All 9 Experiments",
-        height=400,
-        yaxis=dict(autorange="reversed"),
-    )
-    st.plotly_chart(apply_plotly_theme(fig), width="stretch")
+    fig = go.Figure(data=go.Heatmap(
+        z=perclass_df.values, x=perclass_df.columns.tolist(), y=perclass_df.index.tolist(),
+        text=np.round(perclass_df.values, 3).astype(str), texttemplate="%{text}",
+        colorscale="RdYlGn", zmin=0, zmax=1
+    ))
+    fig.update_layout(height=400, yaxis=dict(autorange="reversed"))
+    st.plotly_chart(apply_plotly_theme(fig), use_container_width=True)
 
-    st.markdown(
-        """
-    <div class="highlight-box">
-        <strong>Key observation:</strong> Fear (n=7 test) and Joy (n=9 test) show near-zero F1 
-        for Model A across all classifiers. Domain-specific training (Model B) rescues these classes 
-        partially, but sample scarcity remains the bottleneck.
-    </div>
-    """,
-        unsafe_allow_html=True,
-    )
-
-    st.markdown("---")
-
-    # ── Confusion matrices ──
-    st.markdown("### Confusion Matrices")
-    st.markdown("*Select a condition to view its best classifier's confusion matrix.*")
-
-    # NOTE: To show real confusion matrices, save them as CSVs from Hanok's notebook:
-    #   pd.DataFrame(cm, index=LABELS, columns=LABELS).to_csv('cm_a.csv')
-    # Then load here. For now, this is a placeholder structure.
-
-    cm_condition = st.selectbox(
-        "Select condition",
-        ["Model A (General Only)", "Model B (Domain Only)", "Model C (Mixed)"],
-        key="cm_select",
-    )
-
-    st.info(
-        "💡 **To enable confusion matrices:** Save confusion matrix arrays from the baseline "
-        "notebook as CSVs (e.g., `cm_a_svm.csv`) into `dashboard/data/` and load them here. "
-        "Use `pd.DataFrame(cm, index=LABELS, columns=LABELS).to_csv(path)`."
-    )
-
-    st.markdown("---")
-
-    # ── Key findings ──
-    st.markdown("### Key Findings")
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.markdown(
-            """
-        <div class="dashboard-card">
-            <div class="card-title">🔍 Domain Gap (Model A → B)</div>
-            <ul>
-                <li>~30pp macro F1 gain from domain-specific training</li>
-                <li>165/727 test samples (23%) rescued by domain data</li>
-                <li>TF-IDF features from GoEmotions are nearly useless for financial text</li>
-                <li>Only 53.8% vocabulary overlap between domains</li>
-            </ul>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
-
-    with col2:
-        st.markdown(
-            """
-        <div class="dashboard-card">
-            <div class="card-title">⚠️ Naive Mixing Fails (Model C)</div>
-            <ul>
-                <li>Model C slightly underperforms Model B at TF-IDF level</li>
-                <li>13:1 GoEmotions-to-FPB ratio dilutes financial vocabulary</li>
-                <li>Motivates sequential fine-tuning over naive concatenation</li>
-                <li>Bag-of-words cannot selectively attend to domain tokens</li>
-            </ul>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
-
-    st.markdown(
-        """
-    <div class="highlight-box">
-        <strong>Baseline benchmark to beat:</strong> Model B + Linear SVM achieves 
-        <strong>0.563 macro F1 / 0.762 accuracy</strong>. 
-        BERT experiments (Tasks 3–4) must exceed this to justify added complexity.
-    </div>
-    """,
-        unsafe_allow_html=True,
-    )
+    st.success("**Baseline benchmark to beat:** Model B + Linear SVM achieves **0.563 macro F1 / 0.762 accuracy**. Advanced LLM/BERT experiments must exceed this to justify their computational cost.")

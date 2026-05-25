@@ -7,6 +7,15 @@ Run: streamlit run app.py
 """
 
 import streamlit as st
+import sys
+import os
+
+# --- ADD THESE 3 LINES ---
+# Bulletproof pathing: ensures 'tabs' and 'utils' are found in Streamlit Cloud
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.append(current_dir)
+# -------------------------
 
 # ── Page config ──
 st.set_page_config(
