@@ -24,14 +24,14 @@ def render():
     # -- Load datasets dynamically from centralized paths --
     try:
         # If running streamlit run dashboard/app.py from the project root
-        goemotions = pd.read_csv("data/raw/goemotions_5class.csv")
+        goemotions = pd.read_csv("data/processed/goemotions_5class.csv")
         fpb_train = pd.read_csv("data/processed/fpb_train.csv")
         fpb_val = pd.read_csv("data/processed/fpb_val.csv")
         fpb_test = pd.read_csv("data/processed/fpb_test.csv")
     except Exception:
         try:
             # Fallback if running streamlit run app.py from inside dashboard/ folder
-            goemotions = pd.read_csv("../data/raw/goemotions_5class.csv")
+            goemotions = pd.read_csv("../data/processed/goemotions_5class.csv")
             fpb_train = pd.read_csv("../data/processed/fpb_train.csv")
             fpb_val = pd.read_csv("../data/processed/fpb_val.csv")
             fpb_test = pd.read_csv("../data/processed/fpb_test.csv")
