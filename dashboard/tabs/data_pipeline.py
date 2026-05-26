@@ -79,7 +79,7 @@ def render():
                 go.Bar(
                     x=counts.index.tolist(),
                     y=counts.values.tolist(),
-                    marker_color=[LABEL_COLORS[l] for l in counts.index],
+                    marker_color=[LABEL_COLORS[l] for l in counts.index], # Uses updated utils.py
                     text=[f"{v:,} ({100*v/len(selected_df):.1f}%)" if len(selected_df)>0 else "0" for v in counts.values],
                     textposition="outside",
                 )
@@ -130,8 +130,9 @@ def render():
         go_sizes = [len(goemotions), 0, len(goemotions)]
         fpb_sizes = [0, len(fpb_train), len(fpb_train)]
 
-        fig.add_trace(go.Bar(name="GoEmotions", x=conditions, y=go_sizes, marker_color="#4C72B0"))
-        fig.add_trace(go.Bar(name="FPB Train", x=conditions, y=fpb_sizes, marker_color="#DD8452"))
+        # UPDATED: Using Dark Navy (#264653) and Light Orange (#f4a261)
+        fig.add_trace(go.Bar(name="GoEmotions", x=conditions, y=go_sizes, marker_color="#264653"))
+        fig.add_trace(go.Bar(name="FPB Train", x=conditions, y=fpb_sizes, marker_color="#f4a261"))
         fig.update_layout(barmode="stack", title="Training Set Composition per Condition", yaxis_title="Samples", height=380)
         st.plotly_chart(apply_plotly_theme(fig), width="stretch", use_container_width=True)
 
@@ -209,7 +210,7 @@ def render():
     with col_input:
         sample_text = st.text_area(
             "Enter raw text (or use the financial default):",
-            value="Omg! The CEO @ElonMusk just tweeted that TSLA revenue grew by 45% this quarter!!! #BullMarket https://investor.tsla.com",
+            value="Omg!😮 The CEO @ElonMusk just tweeted that TSLA revenue grew by 45% this quarter!!! #BullMarket https://investor.tsla.com",
             height=150
         )
         

@@ -11,6 +11,7 @@ import plotly.graph_objects as go
 
 
 def render():
+    # UPDATED: CSS colors updated to match PPT Scale Palette
     st.markdown("""
     <style>
     /* Clean card style */
@@ -30,7 +31,7 @@ def render():
     .metric-value {
         font-size: 2.4rem;
         font-weight: 700;
-        color: #1e3a5f;  /* deep navy */
+        color: #264653;  /* PPT Dark Navy */
         margin: 0;
         line-height: 1.2;
     }
@@ -49,8 +50,8 @@ def render():
 
     /* Highlight box for research question */
     .highlight-box {
-        background: #f0f7ff;
-        border-left: 4px solid #2563eb;
+        background: #F7EBDB; /* PPT Light Beige */
+        border-left: 4px solid #e76f51; /* PPT Burnt Orange */
         border-radius: 8px;
         padding: 1.2rem 1.5rem;
         margin: 1.5rem 0;
@@ -72,11 +73,10 @@ def render():
         box-shadow: 0 1px 2px rgba(0,0,0,0.04);
     }
     .pro-table thead th {
-        background: #f8fafc;
-        color: #1e3a5f;
+        background: #264653; /* PPT Dark Navy */
+        color: #ffffff;
         font-weight: 600;
         padding: 0.75rem 1rem;
-        border-bottom: 1px solid #e2e8f0;
         text-align: left;
     }
     .pro-table tbody td {
@@ -103,11 +103,11 @@ def render():
         height: 100%;
     }
     .milestone-card.completed {
-        border-left: 3px solid #10b981;  /* green */
+        border-left: 3px solid #2a9d8f;  /* PPT Teal */
     }
     .milestone-card.in-progress {
-        border-left: 3px solid #2563eb;  /* blue */
-        background: #f8faff;
+        border-left: 3px solid #e9c46a;  /* PPT Mustard */
+        background: #fdfdf9;
     }
     .milestone-card.upcoming {
         border-left: 3px solid #cbd5e1;
@@ -144,17 +144,17 @@ def render():
     .team-card:hover {
         box-shadow: 0 12px 25px -8px rgba(0,0,0,0.1);
         transform: translateY(-3px);
-        border-color: #2563eb;
+        border-color: #2a9d8f; /* PPT Teal */
     }
     .team-name {
         font-size: 1.2rem;
         font-weight: 700;
-        color: #1e3a5f;
+        color: #264653; /* PPT Dark Navy */
         margin-bottom: 0.2rem;
     }
     .team-role {
         font-weight: 600;
-        color: #2563eb;
+        color: #e76f51; /* PPT Burnt Orange */
         margin-bottom: 0.5rem;
     }
     .team-desc {
@@ -167,7 +167,7 @@ def render():
     .section-title {
         font-size: 1.4rem;
         font-weight: 700;
-        color: #1e3a5f;
+        color: #264653; /* PPT Dark Navy */
         margin-bottom: 0.8rem;
         padding-bottom: 0.3rem;
         border-bottom: 2px solid #e2e8f0;
@@ -245,6 +245,8 @@ def render():
     with col2:
         st.markdown('<div class="section-title">:material/pie_chart: 5‑Class Sentiment Scheme</div>', unsafe_allow_html=True)
         test_dist = {"Fear": 7, "Joy": 9, "Neutral": 422, "Optimism": 191, "Sadness": 98}
+        
+        # Pulls from updated LABEL_COLORS in utils.py
         fig = go.Figure(
             data=[
                 go.Pie(
@@ -262,7 +264,7 @@ def render():
             ]
         )
         fig.update_layout(
-            title=dict(text="FPB Test Set Distribution", font=dict(size=16, color='#1e3a5f')),
+            title=dict(text="FPB Test Set Distribution", font=dict(size=16, color='#264653')),
             height=340,
             showlegend=False,
             paper_bgcolor='rgba(0,0,0,0)',

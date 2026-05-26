@@ -25,14 +25,12 @@ def render():
         "Hanok (Modeling) & Bikram (Data Insights)",
     )
 
-    # ── Load results ──
     results_df = load_csv("task2_baseline_results.csv")
 
     if results_df is None:
         st.error("`task2_baseline_results.csv` not found. Please ensure baseline artifacts are generated.")
         st.stop()
 
-    # ── Top-level metrics ──
     st.markdown("### :material/emoji_events: Best Performance per Training Condition")
     best_rows = []
     for condition in results_df["Model Condition"].unique():
@@ -53,7 +51,6 @@ def render():
 
     st.divider()
 
-    # ── BIKRAM'S PRESENTATION MOMENT: Vocabulary Overlap ──
     st.markdown("### :material/psychology: Data Engineer Insight: The Vocabulary Gap")
     
     col_text, col_chart = st.columns([1.2, 1])
@@ -74,31 +71,31 @@ def render():
         )
     
     with col_chart:
-        # Donut chart for Vocab Overlap with high contrast and custom tooltips
+        # UPDATED: Using Tutor's Teal (#2a9d8f) and Burnt Orange (#e76f51)
         fig_vocab = go.Figure(data=[go.Pie(
             labels=['Shared Vocabulary', 'Missing Financial Terms'],
             values=[53.8, 46.2],
             hole=.65,
             marker=dict(
-                colors=['#3498db', '#e74c3c'], # Bright Blue for Shared, Vibrant Red for Missing
-                line=dict(color='#1e293b', width=2) # Dark border for crisp separation
+                colors=['#2a9d8f', '#e76f51'], 
+                line=dict(color='#264653', width=2) # Dark Navy border
             ),
             textinfo='label+percent',
-            textfont=dict(size=14, color='white'), # Force white text on the chart
+            textfont=dict(size=14, color='white'), 
             hoverinfo='label+percent',
             hoverlabel=dict(
-                bgcolor="#0f172a", # Very dark navy background for tooltip
+                bgcolor="#264653", 
                 font_size=15,
-                font_color="white", # Explicitly white tooltip text
-                bordercolor="#00d4ff" # Neon blue border on hover
+                font_color="white", 
+                bordercolor="#e9c46a" # Mustard Yellow highlight on hover
             )
         )])
         
         fig_vocab.update_layout(
             title=dict(
                 text="Domain Vocabulary Overlap",
-                font=dict(size=18, color="#e0e0e0"),
-                x=0.5, # Center the title
+                font=dict(size=18, color="#264653"),
+                x=0.5, 
             ),
             showlegend=False,
             margin=dict(t=40, b=10, l=10, r=10),
@@ -113,7 +110,6 @@ def render():
         
         test_sentence = st.text_input("Enter financial text:", value="The company reported bullish EBITDA margins and lowered amortization costs.")
         
-        # A mock list of common financial words that don't appear in general emotion datasets
         financial_jargon = ["ebitda", "amortization", "bullish", "bearish", "dividend", "equity", "margins", "revenue", "fiscal", "quarter", "stakeholders", "liquidity"]
         
         if test_sentence:
@@ -124,11 +120,10 @@ def render():
             for w in words:
                 clean_w = ''.join(e for e in w.lower() if e.isalnum())
                 if clean_w in financial_jargon:
-                    # Highlight in red
-                    highlighted_text.append(f"<span style='background-color: #e74c3c; color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold;'>{w}</span>")
+                    # UPDATED: Highlight in Burnt Orange
+                    highlighted_text.append(f"<span style='background-color: #e76f51; color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold;'>{w}</span>")
                     blind_count += 1
                 else:
-                    # Normal text
                     highlighted_text.append(w)
             
             st.markdown(" ".join(highlighted_text), unsafe_allow_html=True)
@@ -140,7 +135,6 @@ def render():
 
     st.divider()
 
-    # ── Interactive filters & Chart ──
     st.markdown("### :material/explore: Experiment Explorer")
     filter_col1, filter_col2 = st.columns(2)
     with filter_col1:
@@ -153,9 +147,11 @@ def render():
     metric_choice = st.selectbox(
         "Select metric to compare", 
         ["F1 (macro)", "F1 (weighted)", "Accuracy", "Precision (macro)", "Recall (macro)"])
+    
+    # UPDATED: Using Tutor's Dark Navy, Mustard Yellow, and Burnt Orange
     fig = px.bar(
         filtered, x="Model Condition", y=metric_choice, color="Classifier",
-        barmode="group", color_discrete_sequence=["#4C72B0", "#DD8452", "#55A868"], text=metric_choice
+        barmode="group", color_discrete_sequence=["#264653", "#e9c46a", "#e76f51"], text=metric_choice
     )
     fig.update_traces(texttemplate="%{text:.3f}", textposition="outside")
     fig.update_layout(height=400, yaxis_range=[0, 1])
@@ -163,7 +159,6 @@ def render():
 
     st.divider()
 
-    # ── Per-class F1 heatmap ──
     st.markdown("### :material/analytics: Per-Class F1 Analysis")
     
     perclass_data = {
@@ -180,10 +175,13 @@ def render():
     }
     perclass_df = pd.DataFrame(perclass_data).set_index("Experiment")
 
+    # UPDATED: Custom colorscale transitioning from Burnt Orange -> Mustard -> Teal
+    custom_colorscale = [[0.0, '#e76f51'], [0.5, '#e9c46a'], [1.0, '#2a9d8f']]
+
     fig = go.Figure(data=go.Heatmap(
         z=perclass_df.values, x=perclass_df.columns.tolist(), y=perclass_df.index.tolist(),
         text=np.round(perclass_df.values, 3).astype(str), texttemplate="%{text}",
-        colorscale="RdYlGn", zmin=0, zmax=1
+        colorscale=custom_colorscale, zmin=0, zmax=1
     ))
     fig.update_layout(height=400, yaxis=dict(autorange="reversed"))
     st.plotly_chart(apply_plotly_theme(fig), use_container_width=True)

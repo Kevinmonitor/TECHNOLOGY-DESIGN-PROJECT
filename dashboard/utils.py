@@ -12,18 +12,19 @@ import os
 # ── Project constants ──
 LABELS = ["Fear", "Joy", "Neutral", "Optimism", "Sadness"]
 
+# Add this to utils.py
 LABEL_COLORS = {
-    "Fear": "#e74c3c",
-    "Joy": "#2ecc71",
-    "Neutral": "#3498db",
-    "Optimism": "#f39c12",
-    "Sadness": "#9b59b6",
+    "Fear": "#e76f51",      # Burnt Orange
+    "Sadness": "#f4a261",   # Light Orange
+    "Neutral": "#e9c46a",   # Mustard Yellow
+    "Optimism": "#2a9d8f",  # Vibrant Teal
+    "Joy": "#264653"        # Dark Navy/Teal
 }
 
 MODEL_COLORS = {
-    "Model A": "#4C72B0",
-    "Model B": "#DD8452",
-    "Model C": "#55A868",
+    "Model A": "#264653", # Dark Navy: The baseline/foundational model (General text)
+    "Model B": "#e76f51", # Burnt Orange: High contrast, representing the shift to the Financial domain
+    "Model C": "#2a9d8f", # Vibrant Teal: The "synthesis" or "success" color representing your sequential transfer
 }
 
 # Plotly theme that respects Streamlit's dark mode
