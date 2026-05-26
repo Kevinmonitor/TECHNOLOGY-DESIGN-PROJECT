@@ -31,7 +31,7 @@ MODEL_COLORS = {
 PLOTLY_LAYOUT = dict(
     paper_bgcolor="rgba(0,0,0,0)",
     plot_bgcolor="rgba(0,0,0,0)",
-    font=dict(color="#e0e0e0", family="Segoe UI, sans-serif"),
+    font=dict(color="#090909", family="Segoe UI, sans-serif"),
     xaxis=dict(gridcolor="rgba(100,100,100,0.2)", zerolinecolor="rgba(100,100,100,0.2)"),
     yaxis=dict(gridcolor="rgba(100,100,100,0.2)", zerolinecolor="rgba(100,100,100,0.2)"),
     margin=dict(l=40, r=20, t=50, b=40),
