@@ -23,23 +23,20 @@ def render():
         "Himanshu - Evaluation Engineer",
     )
 
-    # ── Load all available results ──
     baseline_df = load_csv("task2_baseline_results.csv")
     bert_df = load_csv("bert_results.csv")
     model_c_df = load_csv("model_c_results.csv")
     llm_df = load_csv("llm_results.csv")
 
-    # ── Data availability status ──
     st.markdown("### Data Availability")
     s1, s2, s3, s4 = st.columns(4)
-    s1.metric("TF-IDF Baselines", "✅ Ready" if baseline_df is not None else "❌ Missing")
-    s2.metric("BERT Models", "✅ Ready" if bert_df is not None else "⏳ Pending")
-    s3.metric("Sequential Transfer", "✅ Ready" if model_c_df is not None else "⏳ Pending")
-    s4.metric("LLM Experiments", "✅ Ready" if llm_df is not None else "⏳ Pending")
+    s1.metric("TF-IDF Baselines", ":material/check_circle: Ready" if baseline_df is not None else ":material/cancel: Missing")
+    s2.metric("BERT Models", ":material/check_circle: Ready" if bert_df is not None else ":material/pending: Pending")
+    s3.metric("Sequential Transfer", ":material/check_circle: Ready" if model_c_df is not None else ":material/pending: Pending")
+    s4.metric("LLM Experiments", ":material/check_circle: Ready" if llm_df is not None else ":material/pending: Pending")
 
     st.markdown("---")
 
-    # ── Build unified comparison table from whatever is available ──
     all_results = []
 
     if baseline_df is not None:
@@ -96,7 +93,6 @@ def render():
 
     results_df = pd.DataFrame(all_results)
 
-    # ── Master comparison chart ──
     st.markdown("### F1 (Macro) - All Approaches")
 
     metric_choice = st.selectbox(
@@ -128,7 +124,6 @@ def render():
 
     st.markdown("---")
 
-    # ── Full results table ──
     st.markdown("### Full Results Table")
 
     st.dataframe(
@@ -143,7 +138,6 @@ def render():
 
     st.markdown("---")
 
-    # ── Key takeaways ──
     st.markdown("### Key Takeaways")
 
     best = results_df.loc[results_df["F1 (Macro)"].idxmax()]
@@ -155,7 +149,7 @@ def render():
         st.markdown(
             f"""
         <div class="dashboard-card">
-            <div class="card-title">🏆 Best Performing</div>
+            <div class="card-title">:material/emoji_events: Best Performing</div>
             <p><strong>{best['Approach']}</strong></p>
             <p>Method: {best['Method']}</p>
             <p>F1 (Macro): <span style="color:#2ecc71; font-size:1.3rem; font-weight:bold">{best['F1 (Macro)']:.4f}</span></p>
@@ -168,7 +162,7 @@ def render():
         st.markdown(
             f"""
         <div class="dashboard-card">
-            <div class="card-title">📉 Weakest Performing</div>
+            <div class="card-title">:material/trending_down: Weakest Performing</div>
             <p><strong>{worst['Approach']}</strong></p>
             <p>Method: {worst['Method']}</p>
             <p>F1 (Macro): <span style="color:#e74c3c; font-size:1.3rem; font-weight:bold">{worst['F1 (Macro)']:.4f}</span></p>
@@ -177,7 +171,6 @@ def render():
             unsafe_allow_html=True,
         )
 
-    # ── Domain gap analysis ──
     if baseline_df is not None:
         st.markdown("---")
         st.markdown("### Domain Gap Analysis")

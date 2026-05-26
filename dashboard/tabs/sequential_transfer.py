@@ -1,9 +1,6 @@
 """
 Tab 5: Sequential Transfer Learning - Model C
 Owner: Fin (Project Lead) + Bikram (assist)
-
-STATUS: Not yet complete. This page has placeholder structure 
-        that activates when results CSV is dropped in.
 """
 
 import streamlit as st
@@ -11,12 +8,12 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import sys, os
+
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from utils import (
     section_header, load_csv, apply_plotly_theme,
     LABELS, LABEL_COLORS,
 )
-
 
 def render():
     section_header(
@@ -25,12 +22,8 @@ def render():
     )
 
     # ── Try loading results ──
-    # Expected CSV: model_c_results.csv
-    #   stage, accuracy, f1_macro, f1_weighted, f1_fear, f1_joy, f1_neutral, f1_optimism, f1_sadness
-    #   Rows: "After GoEmotions", "After FPB fine-tune"
     model_c_results = load_csv("model_c_results.csv")
 
-    # ── Always show the methodology ──
     st.markdown("### Sequential Fine-tuning Pipeline")
 
     st.markdown(
@@ -46,7 +39,6 @@ def render():
 
     st.markdown("")
 
-    # Pipeline diagram
     col1, col2, col3 = st.columns([1, 0.2, 1])
 
     with col1:
@@ -87,9 +79,8 @@ def render():
             unsafe_allow_html=True,
         )
 
-    st.markdown("---")
+    st.divider()
 
-    # ── Why not naive mixing? ──
     st.markdown("### Why Sequential, Not Mixed?")
 
     col1, col2 = st.columns(2)
@@ -97,7 +88,7 @@ def render():
         st.markdown(
             """
         <div class="dashboard-card">
-            <div class="card-title">❌ Naive Mixing (TF-IDF Model C)</div>
+            <div class="card-title">:material/close: Naive Mixing (TF-IDF Model C)</div>
             <p>Concatenating GoEmotions + FPB at 13:1 ratio <strong>diluted</strong> 
             financial vocabulary in TF-IDF weights.</p>
             <p>Result: Model C <strong>underperformed</strong> Model B (0.543 vs 0.563 macro F1)</p>
@@ -111,7 +102,7 @@ def render():
         st.markdown(
             """
         <div class="dashboard-card">
-            <div class="card-title">✅ Sequential Fine-tuning (BERT Model C)</div>
+            <div class="card-title">:material/check_circle: Sequential Fine-tuning (BERT Model C)</div>
             <p>BERT's self-attention can <strong>selectively attend</strong> to domain-relevant 
             tokens regardless of training order.</p>
             <p>Sequential training lets the model build general representations first, 
@@ -122,18 +113,16 @@ def render():
             unsafe_allow_html=True,
         )
 
-    st.markdown("---")
+    st.divider()
 
     if model_c_results is None:
-        # ── Placeholder ──
         st.markdown("### Results")
         st.info(
-            "📂 **Fin:** Export Model C results to `dashboard/data/model_c_results.csv` "
+            ":material/folder: **Fin:** Export Model C results to `dashboard/data/model_c_results.csv` "
             "with columns: stage, accuracy, f1_macro, f1_weighted, "
             "f1_fear, f1_joy, f1_neutral, f1_optimism, f1_sadness"
         )
 
-        # Show baselines to beat
         st.markdown("### Targets to Exceed")
         targets = pd.DataFrame({
             "Benchmark": [
@@ -147,13 +136,8 @@ def render():
         st.dataframe(targets, width="stretch", hide_index=True)
         return
 
-    # ═══════════════════════════════════════════════════════
-    # BELOW: renders when model_c_results.csv exists
-    # ═══════════════════════════════════════════════════════
-
     st.markdown("### Results")
 
-    # ── Stage comparison metrics ──
     cols = st.columns(len(model_c_results))
     for col, (_, row) in zip(cols, model_c_results.iterrows()):
         with col:
@@ -163,7 +147,6 @@ def render():
                 delta=f"Acc: {row['accuracy']:.3f}",
             )
 
-    # ── Compare all approaches ──
     st.markdown("### Full Pipeline Comparison")
 
     all_models = [
@@ -195,7 +178,6 @@ def render():
     fig.update_layout(height=450, yaxis_range=[0, 1])
     st.plotly_chart(apply_plotly_theme(fig), width="stretch")
 
-    # ── Per-class improvement ──
     perclass_cols = ["f1_fear", "f1_joy", "f1_neutral", "f1_optimism", "f1_sadness"]
     if len(model_c_results) >= 2 and all(c in model_c_results.columns for c in perclass_cols):
         st.markdown("### Per-Class F1: Before vs After Domain Adaptation")

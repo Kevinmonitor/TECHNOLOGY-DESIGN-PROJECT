@@ -23,18 +23,8 @@ def render():
         "Kevin - LLM Analyst",
     )
 
-    # ── Try loading results ──
-    # Expected CSV: llm_results.csv
-    #   model, strategy, accuracy, f1_macro, f1_weighted,
-    #   f1_fear, f1_joy, f1_neutral, f1_optimism, f1_sadness
-    # Example rows:
-    #   "Gemma 3 4B", "zero-shot", 0.45, 0.30, ...
-    #   "Gemma 3 4B", "few-shot (5)", 0.52, 0.38, ...
-    #   "Llama 3.2 3B", "zero-shot", 0.42, 0.28, ...
-    #   "Llama 3.2 3B", "few-shot (5)", 0.49, 0.35, ...
     llm_results = load_csv("llm_results.csv")
 
-    # ── Always show methodology ──
     st.markdown("### Experiment Design")
 
     col1, col2 = st.columns(2)
@@ -86,8 +76,7 @@ def render():
 
     st.markdown("---")
 
-    # ── Prompt design ──
-    with st.expander("💬 Prompt Templates"):
+    with st.expander(":material/chat: Prompt Templates"):
         st.markdown("**Zero-shot prompt:**")
         st.code(
             """Classify the following financial text into one of these sentiment categories:
@@ -109,10 +98,9 @@ Sentiment:""",
     st.markdown("---")
 
     if llm_results is None:
-        # ── Placeholder ──
         st.markdown("### Results")
         st.info(
-            "📂 **Kevin:** Export your LLM results to `dashboard/data/llm_results.csv` "
+            ":material/folder: **Kevin:** Export your LLM results to `dashboard/data/llm_results.csv` "
             "with columns: model, strategy, accuracy, f1_macro, f1_weighted, "
             "f1_fear, f1_joy, f1_neutral, f1_optimism, f1_sadness"
         )
@@ -129,11 +117,6 @@ Sentiment:""",
         st.dataframe(baselines, width="stretch", hide_index=True)
         return
 
-    # ═══════════════════════════════════════════════════════
-    # BELOW: renders when llm_results.csv exists
-    # ═══════════════════════════════════════════════════════
-
-    # ── Headline metrics ──
     st.markdown("### Results Overview")
 
     cols = st.columns(len(llm_results))
@@ -145,7 +128,6 @@ Sentiment:""",
                 delta=f"Acc: {row['accuracy']:.3f}",
             )
 
-    # ── Filters ──
     st.markdown("### Detailed Comparison")
 
     filter_col1, filter_col2 = st.columns(2)
@@ -167,7 +149,6 @@ Sentiment:""",
         & (llm_results["strategy"].isin(selected_strategies))
     ]
 
-    # ── Bar chart ──
     filtered_display = filtered.copy()
     filtered_display["label"] = filtered_display["model"] + " - " + filtered_display["strategy"]
 
@@ -184,7 +165,6 @@ Sentiment:""",
     fig.update_layout(height=400, yaxis_range=[0, 1], xaxis_title="")
     st.plotly_chart(apply_plotly_theme(fig), width="stretch")
 
-    # ── LLM vs fine-tuned comparison ──
     st.markdown("### LLM vs Fine-tuned Models")
 
     all_models = [
@@ -213,6 +193,5 @@ Sentiment:""",
     fig.update_layout(height=400, yaxis_range=[0, 1])
     st.plotly_chart(apply_plotly_theme(fig), width="stretch")
 
-    # ── Results table ──
-    with st.expander("📋 Full Results Table"):
+    with st.expander(":material/table_view: Full Results Table"):
         st.dataframe(filtered, width="stretch", hide_index=True)

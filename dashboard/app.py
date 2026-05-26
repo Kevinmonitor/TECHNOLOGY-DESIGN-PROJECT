@@ -84,14 +84,14 @@ st.sidebar.markdown("*Swinburne University of Technology*")
 
 
 # ── Main content: use tabs for navigation ──
-tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
-    "🏠 Overview",
-    "🔧 Data Pipeline",
-    "📈 Baselines",
-    "🤖 BERT Fine-tuning",
-    "🔄 Sequential Transfer",
-    "💬 LLM Experiments",
-    "📊 Evaluation",
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = tabs = st.tabs([
+    ":material/dashboard: Overview",            
+    ":material/account_tree: Data Pipeline",    
+    ":material/stacked_bar_chart: Baselines",   
+    ":material/memory: BERT Fine-tuning",       
+    ":material/layers: Sequential Transfer",    
+    ":material/terminal: LLM Experiments",      
+    ":material/fact_check: Evaluation"          
 ])
 
 with tab1:

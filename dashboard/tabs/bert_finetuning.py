@@ -24,25 +24,17 @@ def render():
         "Aniketh - NLP Engineer",
     )
 
-    # ── Try loading BERT results ──
-    # Expected CSV format (one row per model):
-    #   model, accuracy, f1_macro, f1_weighted, precision_macro, recall_macro,
-    #   f1_fear, f1_joy, f1_neutral, f1_optimism, f1_sadness
-    #
-    # Aniketh: export your results to these filenames:
     bert_results = load_csv("bert_results.csv")
 
     if bert_results is None:
-        # ── Show placeholder with expected structure ──
         st.info(
-            "📂 **Aniketh:** Export your BERT results to `dashboard/data/bert_results.csv` "
+            ":material/folder: **Aniketh:** Export your BERT results to `dashboard/data/bert_results.csv` "
             "with columns: model, accuracy, f1_macro, f1_weighted, precision_macro, recall_macro, "
             "f1_fear, f1_joy, f1_neutral, f1_optimism, f1_sadness"
         )
 
         st.markdown("")
 
-        # Show what we know so far + framework
         st.markdown("### Experiment Design")
 
         col1, col2 = st.columns(2)
@@ -103,11 +95,6 @@ def render():
         )
         return
 
-    # ═══════════════════════════════════════════════════════
-    # BELOW THIS LINE: renders when bert_results.csv exists
-    # ═══════════════════════════════════════════════════════
-
-    # ── Headline metrics ──
     cols = st.columns(len(bert_results))
     for col, (_, row) in zip(cols, bert_results.iterrows()):
         with col:
@@ -119,11 +106,9 @@ def render():
 
     st.markdown("")
 
-    # ── BERT vs TF-IDF comparison ──
     st.markdown("### BERT vs TF-IDF Baselines")
 
     comparison_data = []
-    # TF-IDF baselines (hardcoded from Hanok's results)
     comparison_data.append({"Model": "TF-IDF A (SVM)", "Type": "Baseline", "F1 (macro)": 0.258, "Accuracy": 0.561})
     comparison_data.append({"Model": "TF-IDF B (SVM)", "Type": "Baseline", "F1 (macro)": 0.563, "Accuracy": 0.762})
 
@@ -150,7 +135,6 @@ def render():
     fig.update_layout(height=450, yaxis_range=[0, 1])
     st.plotly_chart(apply_plotly_theme(fig), width="stretch")
 
-    # ── Per-class F1 ──
     st.markdown("### Per-Class F1 Breakdown")
 
     perclass_cols = ["f1_fear", "f1_joy", "f1_neutral", "f1_optimism", "f1_sadness"]
@@ -176,8 +160,7 @@ def render():
         fig.update_layout(height=400, yaxis_range=[0, 1])
         st.plotly_chart(apply_plotly_theme(fig), width="stretch")
 
-    # ── Training details ──
-    with st.expander("🔧 Hyperparameters & Training Details"):
+    with st.expander(":material/build: Hyperparameters & Training Details"):
         st.markdown(
             """
         | Parameter | Value |

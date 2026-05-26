@@ -11,7 +11,6 @@ import plotly.graph_objects as go
 
 
 def render():
-    # ── Professional light theme with clear contrast ──
     st.markdown("""
     <style>
     /* Clean card style */
@@ -42,6 +41,10 @@ def render():
         text-transform: uppercase;
         letter-spacing: 0.4px;
         margin-top: 0.4rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
     }
 
     /* Highlight box for research question */
@@ -172,59 +175,55 @@ def render():
     </style>
     """, unsafe_allow_html=True)
 
-    # ── Header ──
     section_header(
         "Domain-Adaptive Sentiment Analysis",
         "Comparing Training Strategies for Financial Sentiment Classification",
     )
 
-    # ── Key metrics (light cards) ──
     c1, c2, c3, c4 = st.columns(4)
     with c1:
         st.markdown("""
         <div class="metric-card">
             <div class="metric-value">4</div>
-            <div class="metric-label">🧠 Models Compared</div>
+            <div class="metric-label">:material/memory: Models Compared</div>
         </div>
         """, unsafe_allow_html=True)
     with c2:
         st.markdown("""
         <div class="metric-card">
             <div class="metric-value">2</div>
-            <div class="metric-label">📊 Datasets</div>
+            <div class="metric-label">:material/dataset: Datasets</div>
         </div>
         """, unsafe_allow_html=True)
     with c3:
         st.markdown("""
         <div class="metric-card">
             <div class="metric-value">727</div>
-            <div class="metric-label">🧪 Test Samples</div>
+            <div class="metric-label">:material/science: Test Samples</div>
         </div>
         """, unsafe_allow_html=True)
     with c4:
         st.markdown("""
         <div class="metric-card">
             <div class="metric-value">5</div>
-            <div class="metric-label">🏷️ Label Classes</div>
+            <div class="metric-label">:material/label: Label Classes</div>
         </div>
         """, unsafe_allow_html=True)
 
     st.markdown("")
 
-    # ── Research question ──
     st.markdown("""
     <div class="highlight-box">
-        <strong>🔬 Research Question:</strong> How does training data composition and transfer learning 
+        <strong>:material/search: Research Question:</strong> How does training data composition and transfer learning 
         strategy affect sentiment classification performance when moving from general-domain to 
         financial-domain text?
     </div>
     """, unsafe_allow_html=True)
 
-    # ── Experimental framework & distribution ──
     col1, col2 = st.columns([1.2, 1])
 
     with col1:
-        st.markdown('<div class="section-title">🧪 Experimental Framework</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-title">:material/science: Experimental Framework</div>', unsafe_allow_html=True)
         st.markdown("""
         <table class="pro-table">
             <thead>
@@ -238,13 +237,13 @@ def render():
             </tbody>
         </table>
         <p style="font-size:0.85rem; color:#475569; margin-top:0.7rem;">
-        📌 All models evaluated on the <b>same FPB test set</b> (727 samples).<br>
-        📌 TF-IDF baselines established first to isolate architecture vs data effects.
+        :material/push_pin: All models evaluated on the <b>same FPB test set</b> (727 samples).<br>
+        :material/push_pin: TF-IDF baselines established first to isolate architecture vs data effects.
         </p>
         """, unsafe_allow_html=True)
 
     with col2:
-        st.markdown('<div class="section-title">🎯 5‑Class Sentiment Scheme</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-title">:material/pie_chart: 5‑Class Sentiment Scheme</div>', unsafe_allow_html=True)
         test_dist = {"Fear": 7, "Joy": 9, "Neutral": 422, "Optimism": 191, "Sadness": 98}
         fig = go.Figure(
             data=[
@@ -274,49 +273,50 @@ def render():
 
     st.markdown("")
 
-    # ── Project milestones ──
-    st.markdown('<div class="section-title">📅 Project Milestones</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">:material/calendar_month: Project Milestones</div>', unsafe_allow_html=True)
     milestones = {
-        "Weeks 1-3": ("Individual Research Reports", "✅ Complete"),
-        "Week 4": ("Team Design Brief", "✅ Complete"),
-        "Weeks 5-7": ("Data Pipeline & Preparation", "✅ Complete"),
-        "Week 8": ("Baseline Modelling (TF-IDF)", "✅ Complete"),
-        "Weeks 9-10": ("BERT Fine-tuning & LLM Experiments", "🔄 In Progress"),
-        "Week 11": ("Evaluation & Dashboard", "🔄 In Progress"),
-        "Week 12": ("Demo & Final Report", "📅 Upcoming"),
+        "Weeks 1-3": ("Individual Research Reports", "Complete"),
+        "Week 4": ("Team Design Brief", "Complete"),
+        "Weeks 5-7": ("Data Pipeline & Preparation", "Complete"),
+        "Week 8": ("Baseline Modelling (TF-IDF)", "Complete"),
+        "Weeks 9-10": ("BERT Fine-tuning & LLM Experiments", "Complete"),
+        "Week 11": ("Evaluation & Dashboard", "Complete"),
+        "Week 12": ("Demo & Final Report", "Upcoming"),
     }
 
     cols = st.columns(len(milestones))
     for col, (week, (task, status)) in zip(cols, milestones.items()):
-        # Determine status class
-        if '✅' in status:
+        
+        if 'Complete' in status:
             status_class = "completed"
-        elif '🔄' in status:
+            status_icon = ":material/check_circle: Complete"
+        elif 'Progress' in status:
             status_class = "in-progress"
+            status_icon = ":material/sync: In Progress"
         else:
             status_class = "upcoming"
+            status_icon = ":material/event_upcoming: Upcoming"
 
         with col:
             st.markdown(f"""
             <div class="milestone-card {status_class}">
                 <div class="milestone-week">{week}</div>
                 <div class="milestone-task">{task}</div>
-                <div class="milestone-status">{status}</div>
+                <div class="milestone-status">{status_icon}</div>
             </div>
             """, unsafe_allow_html=True)
 
     st.markdown("")
     st.markdown("")
 
-    # ── Team roles ──
-    st.markdown('<div class="section-title">👥 Team Roles</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">:material/groups: Team Roles</div>', unsafe_allow_html=True)
     team = [
-        ("Fin", "Project Lead", "🧭 Project coordination, Model C oversight, presentation"),
-        ("Bikram", "Data Engineer", "⚙️ Data pipeline, preprocessing, CSV exports, dashboard"),
-        ("Hanok", "ML Engineer", "📈 TF-IDF baselines (Models A/B/C), hyperparameter tuning"),
-        ("Aniketh", "NLP Engineer", "🤖 BERT fine-tuning (Models A & B)"),
-        ("Kevin", "LLM Analyst", "🧪 Zero-shot & few-shot with Gemma 3 / Llama 3.2"),
-        ("Himanshu", "Eval Engineer", "📊 Cross-model evaluation, metrics, final comparison"),
+        ("Fin", "Project Lead", ":material/explore: Project coordination, Model C oversight, presentation"),
+        ("Bikram", "Data Engineer", ":material/settings: Data pipeline, preprocessing, CSV exports,Baseline, dashboard"),
+        ("Hanok", "ML Engineer", ":material/trending_up: TF-IDF baselines (Models A/B/C), hyperparameter tuning"),
+        ("Aniketh", "NLP Engineer", ":material/memory: BERT fine-tuning (Models A & B)"),
+        ("Kevin", "LLM Analyst", ":material/science: Zero-shot & few-shot with Gemma 3 / Llama 3.2"),
+        ("Himanshu", "Eval Engineer", ":material/bar_chart: Cross-model evaluation, metrics, final comparison"),
     ]
 
     cols = st.columns(3)

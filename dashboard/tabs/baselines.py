@@ -29,11 +29,11 @@ def render():
     results_df = load_csv("task2_baseline_results.csv")
 
     if results_df is None:
-        st.error("🚨 `task2_baseline_results.csv` not found. Please ensure baseline artifacts are generated.")
+        st.error("`task2_baseline_results.csv` not found. Please ensure baseline artifacts are generated.")
         st.stop()
 
     # ── Top-level metrics ──
-    st.markdown("### 🏆 Best Performance per Training Condition")
+    st.markdown("### :material/emoji_events: Best Performance per Training Condition")
     best_rows = []
     for condition in results_df["Model Condition"].unique():
         subset = results_df[results_df["Model Condition"] == condition]
@@ -54,44 +54,94 @@ def render():
     st.divider()
 
     # ── BIKRAM'S PRESENTATION MOMENT: Vocabulary Overlap ──
-    st.markdown("### 🧠 Data Engineer Insight: Why Model A Failed")
+    st.markdown("### :material/psychology: Data Engineer Insight: The Vocabulary Gap")
     
-    col_text, col_chart = st.columns([1.5, 1])
+    col_text, col_chart = st.columns([1.2, 1])
     
     with col_text:
         st.markdown(
             """
-            **The Problem:** Model A (trained purely on GoEmotions) performed poorly on the Financial PhraseBank test set, specifically completely failing to detect *Fear* and *Joy*.
+            <div class="highlight-box" style="margin-top: 0px;">
+                <strong>Why did the General Model (A) fail on Financial Text?</strong>
+            </div>
             
-            **The Data Diagnosis:** Through exploratory data analysis, we performed a vocabulary overlap check. Because Baseline models rely on TF-IDF (exact word matches), a lack of shared vocabulary means the model is mathematically blind to the target domain.
-            
-            * Only **53.8%** of the words used in the Financial domain exist in the General domain.
-            * Crucial financial terms (e.g., 'ebitda', 'amortisation', 'bullish') are treated as unknown tokens.
-            * **Conclusion:** This data-engineering insight validates our entire architectural strategy for Domain Adaptation (Model B and C).
-            """
+            * :material/error: **The Problem:** Model A completely failed to detect *Fear* and *Joy* in the test set.
+            * :material/search: **The Cause:** TF-IDF models require exact word matches to make predictions.
+            * :material/trending_down: **The Blind Spot:** **46.2%** of financial words (e.g., <i>'ebitda'</i>, <i>'bullish'</i>) do not exist in the general training data!
+            * :material/check_circle: **Conclusion:** This data reality proves why our team had to build Domain-Adaptive models (B & C).
+            """,
+            unsafe_allow_html=True
         )
     
     with col_chart:
-        # Donut chart for Vocab Overlap
+        # Donut chart for Vocab Overlap with high contrast and custom tooltips
         fig_vocab = go.Figure(data=[go.Pie(
             labels=['Shared Vocabulary', 'Missing Financial Terms'],
             values=[53.8, 46.2],
-            hole=.6,
-            marker_colors=['#4C72B0', '#EAEAEA'], # Blue for shared, light grey for missing
-            textinfo='label+percent'
+            hole=.65,
+            marker=dict(
+                colors=['#3498db', '#e74c3c'], # Bright Blue for Shared, Vibrant Red for Missing
+                line=dict(color='#1e293b', width=2) # Dark border for crisp separation
+            ),
+            textinfo='label+percent',
+            textfont=dict(size=14, color='white'), # Force white text on the chart
+            hoverinfo='label+percent',
+            hoverlabel=dict(
+                bgcolor="#0f172a", # Very dark navy background for tooltip
+                font_size=15,
+                font_color="white", # Explicitly white tooltip text
+                bordercolor="#00d4ff" # Neon blue border on hover
+            )
         )])
+        
         fig_vocab.update_layout(
-            title_text="Vocabulary Overlap (General vs Financial)",
+            title=dict(
+                text="Domain Vocabulary Overlap",
+                font=dict(size=18, color="#e0e0e0"),
+                x=0.5, # Center the title
+            ),
             showlegend=False,
-            margin=dict(t=40, b=0, l=0, r=0),
-            height=250
+            margin=dict(t=40, b=10, l=10, r=10),
+            height=260,
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
         )
         st.plotly_chart(apply_plotly_theme(fig_vocab), use_container_width=True)
+
+    with st.expander(":material/touch_app: Interactive: Test Model A's Blind Spots"):
+        st.markdown("Type a financial sentence to see which words Model A (General Domain) doesn't understand.")
+        
+        test_sentence = st.text_input("Enter financial text:", value="The company reported bullish EBITDA margins and lowered amortization costs.")
+        
+        # A mock list of common financial words that don't appear in general emotion datasets
+        financial_jargon = ["ebitda", "amortization", "bullish", "bearish", "dividend", "equity", "margins", "revenue", "fiscal", "quarter", "stakeholders", "liquidity"]
+        
+        if test_sentence:
+            words = test_sentence.split()
+            highlighted_text = []
+            blind_count = 0
+            
+            for w in words:
+                clean_w = ''.join(e for e in w.lower() if e.isalnum())
+                if clean_w in financial_jargon:
+                    # Highlight in red
+                    highlighted_text.append(f"<span style='background-color: #e74c3c; color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold;'>{w}</span>")
+                    blind_count += 1
+                else:
+                    # Normal text
+                    highlighted_text.append(w)
+            
+            st.markdown(" ".join(highlighted_text), unsafe_allow_html=True)
+            
+            if blind_count > 0:
+                st.error(f":material/error: Model A is completely blind to {blind_count} critical context words in this sentence!")
+            else:
+                st.success(":material/check_circle: Model A understands this vocabulary.")
 
     st.divider()
 
     # ── Interactive filters & Chart ──
-    st.markdown("### 📊 Experiment Explorer")
+    st.markdown("### :material/explore: Experiment Explorer")
     filter_col1, filter_col2 = st.columns(2)
     with filter_col1:
         selected_conditions = st.multiselect("Training Conditions", results_df["Model Condition"].unique().tolist(), default=results_df["Model Condition"].unique().tolist())
@@ -100,7 +150,9 @@ def render():
 
     filtered = results_df[(results_df["Model Condition"].isin(selected_conditions)) & (results_df["Classifier"].isin(selected_classifiers))]
 
-    metric_choice = st.selectbox("Select metric to compare", ["F1 (macro)", "Accuracy"])
+    metric_choice = st.selectbox(
+        "Select metric to compare", 
+        ["F1 (macro)", "F1 (weighted)", "Accuracy", "Precision (macro)", "Recall (macro)"])
     fig = px.bar(
         filtered, x="Model Condition", y=metric_choice, color="Classifier",
         barmode="group", color_discrete_sequence=["#4C72B0", "#DD8452", "#55A868"], text=metric_choice
@@ -112,9 +164,8 @@ def render():
     st.divider()
 
     # ── Per-class F1 heatmap ──
-    st.markdown("### 🎯 Per-Class F1 Analysis")
+    st.markdown("### :material/analytics: Per-Class F1 Analysis")
     
-    # Hardcoded from notebook output
     perclass_data = {
         "Experiment": [
             "A - LogReg", "A - SVM", "A - NB",
